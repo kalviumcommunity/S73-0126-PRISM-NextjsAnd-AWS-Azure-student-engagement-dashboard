@@ -11,7 +11,7 @@ This ensures consistency across development and production environments.
 
 ### CI/CD with GitHub Actions
 A CI pipeline was configured using GitHub Actions. On every push
-to the 2.5 branch, the pipeline installs dependencies and builds
+to the cloud-deployment branch, the pipeline installs dependencies and builds
 the application automatically. This helps catch errors early
 and ensures reliable deployments.
 
