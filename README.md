@@ -87,4 +87,4 @@ http://localhost:3000
 
 
 
-![Local App Screenshot](../S73-0126-PRISM-NextjsAnd-AWS-Azure-student-engagement-dashboard/screenshots/project-initialisation.png)
+![Local App Screenshot](./screenshots/project-initialisation.png)
