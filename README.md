@@ -1,64 +1,58 @@
-## TypeScript & ESLint Configuration (Sprint 1 – Brain 2.9)
+## Environment Variable Management
 
-To maintain high code quality and consistency across the project, we configured strict TypeScript rules, integrated ESLint with Prettier, and enforced automated checks using pre-commit hooks. This setup ensures a clean, scalable, and bug-resistant codebase as the project grows.
-
----
-
-### Strict TypeScript Configuration
-
-TypeScript was configured in **strict mode** to catch errors early during development and prevent runtime issues.
-
-Enabled options include:
-- `strict` – Enables all strict type-checking options
-- `noImplicitAny` – Prevents variables from having implicit `any` types
-- `noUnusedLocals` – Detects unused variables
-- `noUnusedParameters` – Detects unused function parameters
-- `forceConsistentCasingInFileNames` – Prevents casing-related import issues
-- `skipLibCheck` – Speeds up builds by skipping type checks for libraries
-
-These rules improve code safety, readability, and long-term maintainability.
+To securely manage configuration and sensitive data, this project uses Next.js built-in environment variable support. This ensures secrets are protected while allowing safe configuration sharing across the team.
 
 ---
 
-### ESLint & Prettier Setup
+### Environment Files
 
-We use **Next.js built-in ESLint (`next lint`)** along with Prettier to enforce best practices and consistent formatting.
+We use two environment files:
 
-#### ESLint
-- Integrated using `eslint-config-next`
-- Detects common bugs and enforces React and Next.js best practices
-- Warns against unsafe patterns such as excessive `console.log` usage
+#### `.env.local`
+- Stores real secrets such as database URLs and API keys
+- Used only in local development
+- Never committed to GitHub
 
-#### Prettier
-- Handles consistent formatting across the codebase
-- Enforces:
-  - Double quotes
-  - Semicolons
-  - Two-space indentation
-  - Trailing commas where applicable
-
-This separation ensures ESLint focuses on code quality while Prettier handles formatting.
+#### `.env.example`
+- Provides a template for required environment variables
+- Contains placeholder values only
+- Helps teammates configure their local environment safely
 
 ---
 
-### Pre-Commit Hooks with Husky
+### Environment Variables Overview
 
-Husky is configured to run lint checks before every commit.
-
-- Prevents commits if linting fails
-- Ensures all committed code follows project standards
-- Maintains consistency across all team contributions
-
-This automated enforcement significantly reduces errors and improves collaboration.
+| Variable Name | Scope | Description |
+|--------------|------|-------------|
+DATABASE_URL | Server-only | Database connection string |
+INTERNAL_API_KEY | Server-only | Internal service authentication |
+NEXT_PUBLIC_APP_NAME | Client-safe | Application display name |
+NEXT_PUBLIC_API_BASE_URL | Client-safe | Base URL for frontend API calls |
 
 ---
 
-### Why This Setup?
+### Server vs Client Variables
 
-This configuration:
-- Reduces runtime bugs through strict typing
-- Keeps code clean and readable
-- Prevents inconsistent styles across contributors
-- Ensures professional development standards from the first sprint
+- Server-side variables are accessed using `process.env.VARIABLE_NAME`
+- Client-side variables must be prefixed with `NEXT_PUBLIC_`
+- Variables without `NEXT_PUBLIC_` are never exposed to the browser
 
-Overall, it provides a strong foundation for scaling the application in future sprints.
+---
+
+### Build-time vs Runtime Behavior
+
+- Environment variables are injected at build time
+- Changes to `.env.local` require restarting the development server
+- This ensures predictable builds and prevents accidental exposure
+
+---
+
+### Security Considerations & Pitfalls
+
+Common risks include accidentally committing secret files or exposing sensitive values to the client.  
+We prevent this by:
+- Ignoring `.env.local` using `.gitignore`
+- Using `.env.example` for documentation
+- Strictly separating server-only and client-safe variables
+
+This setup protects sensitive data while maintaining clarity and collaboration across the team.
