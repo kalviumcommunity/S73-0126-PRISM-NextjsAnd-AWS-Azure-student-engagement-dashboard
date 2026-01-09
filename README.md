@@ -1,90 +1,64 @@
+## TypeScript & ESLint Configuration (Sprint 1 – Brain 2.9)
 
-# Student Engagement & Collaboration Platform
-
-Educational institutions often lack visibility into student engagement and project progress.
-This project aims to improve collaboration and learning outcomes by providing dashboards
-and peer feedback mechanisms for students and instructors.
-
-This repository contains the base setup for the project using **Next.js (TypeScript)**
-with a clean and scalable folder structure.
+To maintain high code quality and consistency across the project, we configured strict TypeScript rules, integrated ESLint with Prettier, and enforced automated checks using pre-commit hooks. This setup ensures a clean, scalable, and bug-resistant codebase as the project grows.
 
 ---
 
-## 🚀 Tech Stack
+### Strict TypeScript Configuration
 
-- Next.js (App Router)
-- TypeScript
-- Node.js
-- ESLint
-- PostCSS
-- Tailwind CSS (optional styling support)
+TypeScript was configured in **strict mode** to catch errors early during development and prevent runtime issues.
 
----
+Enabled options include:
+- `strict` – Enables all strict type-checking options
+- `noImplicitAny` – Prevents variables from having implicit `any` types
+- `noUnusedLocals` – Detects unused variables
+- `noUnusedParameters` – Detects unused function parameters
+- `forceConsistentCasingInFileNames` – Prevents casing-related import issues
+- `skipLibCheck` – Speeds up builds by skipping type checks for libraries
 
-## 📁 Folder Structure
-
-```
-    src/
-    ├── app/ # Routes, layouts, and pages (Next.js App Router)
-    │ ├── intropage/ # Intro / landing page
-    │ ├── dashboard/ # Dashboard route (future work)
-    │ ├── page.tsx # Home route
-    │ ├── layout.tsx # Root layout
-    │ └── globals.css # Global styles
-    ├── components/ # Reusable UI components
-    ├── lib/ # Utility functions and shared helpers
-    public/ # Static assets
-```
-
-
-### Folder Purpose
-
-- **app/**  
-  Contains all route definitions using the Next.js App Router.  
-  Each folder represents a route in the application.
-
-- **components/**  
-  Holds reusable UI components such as navigation bars, cards, and layout elements.
-  This keeps UI logic separate from routing.
-
-- **lib/**  
-  Contains helper functions, constants, and shared utilities used across the app.
-
-- **public/**  
-  Stores static assets such as images and icons.
-
-This structure improves modularity, readability, and scalability for future sprints.
+These rules improve code safety, readability, and long-term maintainability.
 
 ---
 
-## 🧭 Intro Page
+### ESLint & Prettier Setup
 
-The application includes an intro page located at:
+We use **Next.js built-in ESLint (`next lint`)** along with Prettier to enforce best practices and consistent formatting.
 
-    /intropage
+#### ESLint
+- Integrated using `eslint-config-next`
+- Detects common bugs and enforces React and Next.js best practices
+- Warns against unsafe patterns such as excessive `console.log` usage
 
+#### Prettier
+- Handles consistent formatting across the codebase
+- Enforces:
+  - Double quotes
+  - Semicolons
+  - Two-space indentation
+  - Trailing commas where applicable
 
-
-This page introduces the platform’s purpose and provides a starting point
-before navigating to dashboards and other features.
+This separation ensures ESLint focuses on code quality while Prettier handles formatting.
 
 ---
 
-## ⚙️ Setup Instructions
+### Pre-Commit Hooks with Husky
 
-### 1. Install dependencies
-```bash
-npm install
+Husky is configured to run lint checks before every commit.
 
+- Prevents commits if linting fails
+- Ensures all committed code follows project standards
+- Maintains consistency across all team contributions
 
-npm run dev
+This automated enforcement significantly reduces errors and improves collaboration.
 
+---
 
-http://localhost:3000
+### Why This Setup?
 
-```
+This configuration:
+- Reduces runtime bugs through strict typing
+- Keeps code clean and readable
+- Prevents inconsistent styles across contributors
+- Ensures professional development standards from the first sprint
 
-
-
-
-![Local App Screenshot](./screenshots/project-initialisation.png)
+Overall, it provides a strong foundation for scaling the application in future sprints.
