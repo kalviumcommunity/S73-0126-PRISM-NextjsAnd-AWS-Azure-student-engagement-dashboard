@@ -1,0 +1,85 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id           Int          @id @default(autoincrement())
+  name         String
+  email        String       @unique
+  role         Role         @default(STUDENT)
+
+  projects     Project[]
+  tasks        Task[]
+  comments     Comment[]
+  memberships  Membership[]   // ✅ FIX: opposite relation added
+
+  createdAt    DateTime     @default(now())
+}
+
+model Project {
+  id          Int           @id @default(autoincrement())
+  name        String
+  ownerId     Int
+  owner       User          @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  tasks       Task[]
+  members     Membership[]
+
+  createdAt   DateTime      @default(now())
+}
+
+model Task {
+  id          Int           @id @default(autoincrement())
+  title       String
+  status      TaskStatus    @default(PENDING)
+
+  projectId   Int
+  project     Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  userId      Int
+  user        User          @relation(fields: [userId], references: [id])
+
+  comments    Comment[]
+}
+
+model Comment {
+  id          Int           @id @default(autoincrement())
+  content     String
+
+  taskId      Int
+  task        Task          @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  userId      Int
+  user        User          @relation(fields: [userId], references: [id])
+
+  createdAt   DateTime      @default(now())
+}
+
+model Membership {
+  id          Int           @id @default(autoincrement())
+
+  userId      Int
+  projectId   Int
+
+  user        User          @relation(fields: [userId], references: [id])
+  project     Project       @relation(fields: [projectId], references: [id])
+
+  @@unique([userId, projectId])
+}
+
+enum Role {
+  STUDENT
+  TEACHER
+  ADMIN
+}
+
+enum TaskStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+}
