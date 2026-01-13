@@ -2,6 +2,9 @@
   "name": "mainwebsite",
   "version": "0.1.0",
   "private": true,
+  "prisma": {
+    "seed": "ts-node prisma/seed.js"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -26,6 +29,7 @@
     "eslint-config-prettier": "^10.1.8",
     "prettier": "^3.7.4",
     "prisma": "^5.22.0",
+    "ts-node": "^10.9.2",
     "typescript": "^5"
   }
 }
