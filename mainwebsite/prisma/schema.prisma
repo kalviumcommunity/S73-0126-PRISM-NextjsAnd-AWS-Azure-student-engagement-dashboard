@@ -16,7 +16,7 @@ model User {
   projects     Project[]
   tasks        Task[]
   comments     Comment[]
-  memberships  Membership[]   // ✅ FIX: opposite relation added
+  memberships  Membership[]
 
   createdAt    DateTime     @default(now())
 }
@@ -31,6 +31,8 @@ model Project {
   members     Membership[]
 
   createdAt   DateTime      @default(now())
+
+  @@index([ownerId])        // 🔹 Optimizes queries by project owner
 }
 
 model Task {
@@ -45,6 +47,9 @@ model Task {
   user        User          @relation(fields: [userId], references: [id])
 
   comments    Comment[]
+
+  @@index([projectId])      // 🔹 Optimizes project-task lookups
+  @@index([userId])         // 🔹 Optimizes user-task lookups
 }
 
 model Comment {
@@ -58,6 +63,8 @@ model Comment {
   user        User          @relation(fields: [userId], references: [id])
 
   createdAt   DateTime      @default(now())
+
+  @@index([taskId])         // 🔹 Optimizes task-comment queries
 }
 
 model Membership {
@@ -69,7 +76,8 @@ model Membership {
   user        User          @relation(fields: [userId], references: [id])
   project     Project       @relation(fields: [projectId], references: [id])
 
-  @@unique([userId, projectId])
+  @@unique([userId, projectId])  // 🔹 Prevents duplicate memberships
+  @@index([projectId])           // 🔹 Optimizes project-member queries
 }
 
 enum Role {
