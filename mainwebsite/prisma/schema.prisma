@@ -11,6 +11,7 @@ model User {
   id           Int          @id @default(autoincrement())
   name         String
   email        String       @unique
+  password     String       // 🔐 REQUIRED
   role         Role         @default(STUDENT)
 
   projects     Project[]
@@ -20,6 +21,7 @@ model User {
 
   createdAt    DateTime     @default(now())
 }
+
 
 model Project {
   id          Int           @id @default(autoincrement())
