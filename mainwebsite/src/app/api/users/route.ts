@@ -1,23 +1,64 @@
 import { prisma } from '@/lib/prisma';
-import { NextResponse } from 'next/server';
+import { sendSuccess, sendError } from '@/lib/responseHandler';
+import { ERROR_CODES } from '@/lib/errorCodes';
+import { userSchema } from '@/lib/schemas/userSchema';
+
 
 export async function GET() {
-  const users = await prisma.user.findMany({
-    select: { id: true, name: true, email: true, role: true },
-  });
-  return NextResponse.json(users);
-}
+  try {
+    const users = await prisma.user.findMany({
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        createdAt: true,
+      },
+    });
 
-export async function POST(req: Request) {
-  const body = await req.json();
-
-  if (!body.name || !body.email) {
-    return NextResponse.json(
-      { error: 'Name and email are required' },
-      { status: 400 }
+    return sendSuccess(users, 'Users fetched successfully');
+  } catch (error) {
+    return sendError(
+      'Failed to fetch users',
+      ERROR_CODES.INTERNAL_ERROR,
+      500,
+      error
     );
   }
+}
 
-  const user = await prisma.user.create({ data: body });
-  return NextResponse.json(user, { status: 201 });
+
+
+
+export async function POST(req: Request) {
+  try {
+    const body = await req.json();
+
+    const result = userSchema.safeParse(body);
+
+    if (!result.success) {
+      return sendError(
+        'Validation Error',
+        ERROR_CODES.VALIDATION_ERROR,
+        400,
+        result.error.issues.map((e) => ({
+          field: e.path[0],
+          message: e.message,
+        }))
+      );
+    }
+
+    const user = await prisma.user.create({
+      data: result.data,
+    });
+
+    return sendSuccess(user, 'User created successfully', 201);
+  } catch (error) {
+    return sendError(
+      'Failed to create user',
+      ERROR_CODES.INTERNAL_ERROR,
+      500,
+      error
+    );
+  }
 }
