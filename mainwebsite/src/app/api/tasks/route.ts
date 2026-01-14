@@ -1,23 +1,65 @@
 import { prisma } from '@/lib/prisma';
-import { NextResponse } from 'next/server';
+import { sendSuccess, sendError } from '@/lib/responseHandler';
+import { ERROR_CODES } from '@/lib/errorCodes';
 
+/**
+ * GET /api/tasks
+ * Fetch all tasks
+ */
 export async function GET() {
-  const tasks = await prisma.task.findMany({
-    select: { id: true, title: true, status: true },
-  });
-  return NextResponse.json(tasks);
-}
+  try {
+    const tasks = await prisma.task.findMany({
+      select: {
+        id: true,
+        title: true,
+        status: true,
+        projectId: true,
+        userId: true,
+      },
+    });
 
-export async function POST(req: Request) {
-  const body = await req.json();
-
-  if (!body.title || !body.projectId || !body.userId) {
-    return NextResponse.json(
-      { error: 'Missing required fields' },
-      { status: 400 }
+    return sendSuccess(tasks, 'Tasks fetched successfully');
+  } catch (error) {
+    return sendError(
+      'Failed to fetch tasks',
+      ERROR_CODES.DATABASE_FAILURE,
+      500,
+      error
     );
   }
+}
 
-  const task = await prisma.task.create({ data: body });
-  return NextResponse.json(task, { status: 201 });
+/**
+ * POST /api/tasks
+ * Create a new task
+ */
+export async function POST(req: Request) {
+  try {
+    const body = await req.json();
+
+    if (!body.title || !body.projectId || !body.userId) {
+      return sendError(
+        'Missing required fields',
+        ERROR_CODES.VALIDATION_ERROR,
+        400
+      );
+    }
+
+    const task = await prisma.task.create({
+      data: {
+        title: body.title,
+        projectId: body.projectId,
+        userId: body.userId,
+      },
+    });
+
+    return sendSuccess(task, 'Task created successfully', 201);
+  } catch (error) {
+    return sendError(
+      'Task creation failed',
+      ERROR_CODES.INTERNAL_ERROR,
+      500,
+      error
+    );
+  }
 }
