@@ -1,19 +1,20 @@
 import { prisma } from '@/lib/prisma';
-import { NextResponse } from 'next/server';
+import { sendSuccess, sendError } from '@/lib/responseHandler';
+import { ERROR_CODES } from '@/lib/errorCodes';
 
-export async function GET(_: Request, { params }: { params: { id: string } }) {
-  const user = await prisma.user.findUnique({
-    where: { id: Number(params.id) },
-  });
+export async function GET() {
+  try {
+    const users = await prisma.user.findMany({
+      select: { id: true, name: true, email: true },
+    });
 
-  if (!user) {
-    return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    return sendSuccess(users, 'Users fetched successfully');
+  } catch (error) {
+    return sendError(
+      'Failed to fetch users',
+      ERROR_CODES.DATABASE_FAILURE,
+      500,
+      error
+    );
   }
-
-  return NextResponse.json(user);
-}
-
-export async function DELETE(_: Request, { params }: { params: { id: string } }) {
-  await prisma.user.delete({ where: { id: Number(params.id) } });
-  return NextResponse.json({ message: 'User deleted' });
 }

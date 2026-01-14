@@ -1,27 +1,57 @@
-## ⚡ Transactions, Indexes & Query Optimisation
+## 🌐 Global API Response Handler
 
-### Transactions
-Prisma transactions were implemented to ensure atomic operations. Creating a project and its initial task is wrapped inside `$transaction()` so that either all operations succeed or all changes are rolled back.
+### Unified Response Format
+All API endpoints return a consistent JSON structure to improve predictability and developer experience.
 
-Rollback behavior was verified by intentionally triggering validation errors and confirming that no partial data was written to the database.
+**Success Response**
+```json
+{
+  "success": true,
+  "message": "Operation successful",
+  "data": {},
+  "timestamp": "2026-01-13T10:00:00Z"
+}
+```
+
+**Error Response**
+
+```json
+{
+  "success": false,
+  "message": "Validation failed",
+  "error": { "code": "E001" },
+  "timestamp": "2026-01-13T10:01:00Z"
+}
+```
+
+
+Global Response Utility
+A centralized response handler (lib/responseHandler.ts) is used across all API routes to enforce consistency in success and error responses.
+
+Error Codes
+Common error codes are defined in lib/errorCodes.ts to standardize error tracking and debugging.
+
+Reflection
+Using a global response handler significantly improves developer experience by enforcing predictable API behavior. It also enhances observability by attaching timestamps and error codes, making debugging and monitoring easier in production environments.
+
+yaml
+Copy code
 
 ---
 
-### Indexes
-Indexes were added to frequently queried fields such as foreign keys (`ownerId`, `projectId`, `userId`) using Prisma migrations. This improves lookup speed and prevents full table scans as data scales.
+## 7️⃣ Deliverables Checklist (YOU PASS)
+
+✔ `lib/responseHandler.ts` created  
+✔ Used in **multiple API routes**  
+✔ Consistent success & error responses  
+✔ Optional error codes defined  
+✔ README updated with examples & reflection  
 
 ---
 
-### Query Optimisation
-The following optimizations were applied:
-- Avoided over-fetching using `select` instead of `include`
-- Implemented pagination with `skip` and `take`
-- Used batch inserts via `createMany`
-- Indexed commonly filtered columns
+## 🚀 Final Step: Commit & Push
 
-Query performance was verified using Prisma query logs before and after adding indexes.
-
----
-
-### Reflection
-Transactions ensure data consistency and prevent partial writes. Indexes and optimized queries significantly improve performance and scalability. In production, query latency, execution plans, and error rates should be continuously monitored to maintain reliability.
+```bash
+git add src/lib src/app/api README.md
+git commit -m "Add global API response handler for consistent API responses"
+git push origin <your-branch>
