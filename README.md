@@ -1,57 +1,66 @@
-## 🌐 Global API Response Handler
+## API Validation & Standardized Responses (Zod + Prisma)
 
-### Unified Response Format
-All API endpoints return a consistent JSON structure to improve predictability and developer experience.
+This task implements robust API validation, standardized responses, and error handling across the backend using **Zod**, **Prisma**, and a **global response handler**.
 
-**Success Response**
+---
+
+### 🔐 Input Validation with Zod
+All `POST` requests validate incoming data using Zod schemas before database operations.
+
+Example schema:
+```ts
+import { z } from "zod";
+
+export const userSchema = z.object({
+  name: z.string().min(2),
+  email: z.string().email(),
+});
+
+```
+Validation is executed using safeParse() to prevent invalid data from reaching the database.
+
+🌍 Global API Response Handler
+All API routes return a consistent response structure using a centralized utility:
+
 ```json
 {
   "success": true,
-  "message": "Operation successful",
+  "message": "User created successfully",
   "data": {},
-  "timestamp": "2026-01-13T10:00:00Z"
+  "timestamp": "2026-01-14T06:06:01Z"
 }
+
 ```
+Error responses follow the same structure with meaningful error codes.
 
-**Error Response**
+⚙️ Implemented API Routes
+POST /api/users – Create user with Zod validation
 
-```json
-{
-  "success": false,
-  "message": "Validation failed",
-  "error": { "code": "E001" },
-  "timestamp": "2026-01-13T10:01:00Z"
-}
-```
+GET /api/users – Fetch all users
 
+POST /api/tasks – Create task with validation
 
-Global Response Utility
-A centralized response handler (lib/responseHandler.ts) is used across all API routes to enforce consistency in success and error responses.
+GET /api/tasks – Fetch all tasks
 
-Error Codes
-Common error codes are defined in lib/errorCodes.ts to standardize error tracking and debugging.
+GET /api/projects – Fetch projects
 
-Reflection
-Using a global response handler significantly improves developer experience by enforcing predictable API behavior. It also enhances observability by attaching timestamps and error codes, making debugging and monitoring easier in production environments.
+🧪 API Testing
+APIs were tested using Bruno:
 
-yaml
-Copy code
+Valid requests return 201 Created
 
----
+Invalid inputs return structured validation errors
 
-## 7️⃣ Deliverables Checklist (YOU PASS)
+Duplicate entries are blocked by Prisma constraints
 
-✔ `lib/responseHandler.ts` created  
-✔ Used in **multiple API routes**  
-✔ Consistent success & error responses  
-✔ Optional error codes defined  
-✔ README updated with examples & reflection  
+Screenshots of successful and failed requests are included as proof.
 
----
+💡 Key Takeaways
+Zod ensures data integrity before persistence
 
-## 🚀 Final Step: Commit & Push
+Prisma enforces schema-level constraints
 
-```bash
-git add src/lib src/app/api README.md
-git commit -m "Add global API response handler for consistent API responses"
-git push origin <your-branch>
+Centralized responses improve developer experience and debugging
+
+Consistent API design reduces frontend integration complexity
+
