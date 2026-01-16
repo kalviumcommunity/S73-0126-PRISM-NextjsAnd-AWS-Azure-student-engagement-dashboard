@@ -13,11 +13,18 @@ export async function GET(req: Request) {
       );
     }
 
-    jwt.verify(token, process.env.JWT_SECRET!);
+    const decoded: any = jwt.verify(token, process.env.JWT_SECRET!);
+
+    if (decoded.role !== 'ADMIN') {
+      return NextResponse.json(
+        { success: false, message: 'Access denied' },
+        { status: 403 }
+      );
+    }
 
     return NextResponse.json({
       success: true,
-      message: 'Accessible to all authenticated users',
+      message: 'Welcome Admin! You have full access.',
     });
   } catch {
     return NextResponse.json(
