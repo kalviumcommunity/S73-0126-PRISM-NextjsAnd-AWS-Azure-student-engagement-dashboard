@@ -1,11 +1,22 @@
-## 🔐 Authentication (Signup & Login)
+## Authorization & RBAC
 
-This project implements secure user authentication using **bcrypt** for password hashing and **JWT (JSON Web Tokens)** for session management.
+This project implements Role-Based Access Control (RBAC) using Next.js middleware and JWT.
 
----
+### How It Works
+- Users authenticate via signup/login.
+- JWT tokens include user role.
+- Global middleware validates JWTs.
+- Routes are protected based on roles.
 
-### 📌 Features
-- Secure **Signup API** with hashed passwords
-- **Login API** that validates credentials and issues JWT tokens
-- Centralized API response format for success and errors
-- Environment-based JWT secret configuration
+### Protected Routes
+- `/api/users` → All authenticated users
+- `/api/admin` → Admin-only access
+
+### Role Enforcement
+- ADMIN users can access all routes.
+- STUDENT users are restricted from admin routes.
+
+### Security Principles
+- Least privilege enforced
+- Centralized authorization logic
+- Easy to extend for future roles
